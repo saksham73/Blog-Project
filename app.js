@@ -62,13 +62,26 @@ app.post("/compose",function(req,res){
     content: req.body.cont
   });
 
-  newBlog.save();
+  newBlog.save(function(err){
+    if(!err){
+      res.redirect("/");
+    }
+  });
 
-  res.redirect("/")
+  
 })
 
 app.get("/posts/:stonks",function(req,res){ //routing parameters(:stonks here acts like variable in the route name)
-  Blog.find({}, function(err,founditems){
+  
+  let postID = req.params.stonks;
+  Blog.findById(postID,function(err,found){
+    res.render(__dirname+"/views/post",{
+        title : found.title,
+        para : found.content
+    });
+  });
+  
+  /*Blog.find({}, function(err,founditems){
     founditems.forEach(function(elements){
       if(lodash.lowerCase(elements.title)===lodash.lowerCase(req.params.stonks)){
           res.render(__dirname+'/views/post',{
@@ -77,7 +90,7 @@ app.get("/posts/:stonks",function(req,res){ //routing parameters(:stonks here ac
           })
       }
     });  
-  });
+  });*/
   
   //console.log(req.params.stonks)
 })
